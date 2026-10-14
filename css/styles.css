@@ -559,3 +559,52 @@ a {
   font-size: var(--font-size-sm);
   text-align: center;
 }
+
+/* ---- Sticky mobile bar (F005) ---- */
+
+:root {
+  --sticky-bar-height: 64px;
+}
+
+body {
+  padding-bottom: var(--sticky-bar-height);
+}
+
+.sticky-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  gap: var(--space-2);
+  height: var(--sticky-bar-height);
+  padding: var(--space-2);
+  background: var(--color-surface-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.sticky-bar__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 var(--space-2);
+}
+
+.sticky-bar__call {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.sticky-bar :focus-visible {
+  outline-color: var(--color-accent);
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+
+  .sticky-bar {
+    display: none;
+  }
+}
