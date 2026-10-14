@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Boadilla Motor Sport tests</title>
+  <style>
+    body { font: 14px/1.4 monospace; margin: 1rem; }
+    #results { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Tests</h1>
+  <p>All suites: <code>tests/index.html</code>. One suite: <code>tests/index.html?suite=base</code>.</p>
+  <pre id="results">running...</pre>
+  <div id="frames"></div>
+  <script src="harness.js"></script>
+  <script>
+    "use strict";
+    // Features append their suite id ("F001" ... "F005") when they add tests/<id>.test.js.
+    var SUITES = ["base"];
+    runTests(SUITES);
+  </script>
+</body>
+</html>
