@@ -376,3 +376,9 @@ a {
 .contact__zbe {
   margin-top: var(--space-6);
 }
+
+.site-footer__copy {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
