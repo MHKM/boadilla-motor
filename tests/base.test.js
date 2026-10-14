@@ -300,6 +300,25 @@ test("T001 frames have the documented viewport sizes", function (page) {
     });
   });
 
+  test("T003 every logo text fits inside the viewBox", function () {
+    var LOGOS = ["../assets/logo.svg", "../assets/logo-negative.svg"];
+    return Promise.all(LOGOS.map(function (src) {
+      return loadFrame(src, 360, 64).then(function (fx) {
+        var svg = fx.doc.documentElement;
+        var vb = svg.viewBox.baseVal;
+        assertEqual(vb.width, 360, src + " viewBox width");
+        var texts = svg.querySelectorAll("text");
+        assert(texts.length >= 2, src + " should have the wordmark and SPORT texts");
+        Array.prototype.forEach.call(texts, function (t) {
+          var box = t.getBBox();
+          assert(box.x >= vb.x, src + " text '" + t.textContent + "' starts at " + box.x + ", left of the viewBox");
+          assert(box.x + box.width <= vb.x + vb.width,
+            src + " text '" + t.textContent + "' ends at " + Math.round(box.x + box.width) + ", beyond the viewBox width " + vb.width);
+        });
+      });
+    }));
+  });
+
   test("T003 keyboard focus shows a 3px outline on buttons and nav links", function (page) {
     return loadFrame("fixtures/components.html", 375).then(function (fx) {
       var btn = byTestId(fx.doc, "fx-btn--primary");
