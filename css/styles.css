@@ -408,6 +408,12 @@ a {
   }
 }
 
+/* ---- Why us (F003) ---- */
+
+.section--alt .card {
+  background: var(--color-bg);
+}
+
 /* ---- Accessibility helpers ---- */
 
 .skip-link {
