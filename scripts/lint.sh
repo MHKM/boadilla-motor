@@ -89,6 +89,36 @@ for f in "${CSS_FILES[@]+"${CSS_FILES[@]}"}"; do
     '(:|,|\() *#[0-9a-fA-F]{3,8}([^0-9a-zA-Z_-]|$)|(rgb|rgba|hsl|hsla)\('
 done
 
+# css-var-defined: every var(--x) is defined in css/tokens.css or in a css file of the project
+for f in "${CSS_FILES[@]+"${CSS_FILES[@]}"}"; do
+  while IFS=: read -r line name; do
+    name="${name#var(}"
+    if ! grep -qE "(^|[[:space:];{])${name}[[:space:]]*:" css/*.css; then
+      report css-var-defined "$f" "$line" "var($name) is not defined in css/tokens.css or css/styles.css"
+    fi
+  done < <(grep -noE 'var\(--[A-Za-z0-9_-]+' "$f")
+
+  # font-size-token: font-size values come from a token
+  while IFS=: read -r line _; do
+    row="$(sed -n "${line}p" "$f")"
+    if ! printf '%s' "$row" | grep -qE 'font-size:[^;]*var\('; then
+      report font-size-token "$f" "$line" "font-size must use var(--font-size-*)"
+    fi
+  done < <(grep -nE '(^|[^a-z-])font-size[[:space:]]*:' "$f")
+
+  # no-spacing-literal: margin / padding / gap use 0, auto or tokens, never px/rem/em
+  scan no-spacing-literal "$f" "spacing literal in margin/padding/gap (use var(--space-*))" \
+    '(^|[^a-z-])(margin|padding|gap|row-gap|column-gap)(-[a-z]+)?[[:space:]]*:[^;]*[0-9.]+(px|rem|em)([^a-z]|$)'
+
+  # media-width: only the project breakpoints
+  while IFS=: read -r line value; do
+    case "$value" in
+      640px | 768px | 1024px | 1280px) ;;
+      *) report media-width "$f" "$line" "@media width $value is not a breakpoint (640px, 768px, 1024px, 1280px)" ;;
+    esac
+  done < <(grep -noE '@media[^{]*(min|max)-width[[:space:]]*:[[:space:]]*[0-9.]+[a-z%]*' "$f" | sed -E 's/^([0-9]+):.*(min|max)-width[[:space:]]*:[[:space:]]*/\1:/')
+done
+
 # ---- JS rules (js/*.js) ----
 
 for f in "${JS_FILES[@]+"${JS_FILES[@]}"}"; do

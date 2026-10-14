@@ -6,11 +6,44 @@
   <meta name="color-scheme" content="light">
   <title>Boadilla Motor Sport | Taller multimarca en Boadilla del Monte</title>
   <meta name="description" content="Taller mecánico multimarca en Boadilla del Monte. Mantenimiento, reparación y revisión de tu coche, con cita por teléfono o WhatsApp.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <main>
-    <h1>Boadilla Motor Sport</h1>
+  <a class="skip-link" href="#contenido" data-testid="skip-link">Saltar al contenido</a>
+
+  <header class="site-header" data-testid="header">
+    <a class="site-header__logo" href="#inicio" data-testid="header-logo"><img src="assets/logo-negative.svg" alt="Boadilla Motor Sport" width="360" height="64"></a>
+    <nav class="site-nav" aria-label="Principal" data-testid="header-nav">
+      <a class="site-nav__link" href="#servicios" data-testid="header-nav-link">Servicios</a>
+      <a class="site-nav__link" href="#por-que-nosotros" data-testid="header-nav-link">Por qué nosotros</a>
+      <a class="site-nav__link" href="#contacto" data-testid="header-nav-link">Contacto</a>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    <section id="inicio" data-testid="hero">
+      <!-- F001: content -->
+    </section>
+
+    <section id="servicios" data-testid="services">
+      <!-- F002: content -->
+    </section>
+
+    <section id="por-que-nosotros" data-testid="why-us">
+      <!-- F003: content -->
+    </section>
+
+    <section id="contacto" data-testid="contact">
+      <!-- F004: content -->
+    </section>
   </main>
+
+  <footer class="site-footer" data-testid="footer">
+    <!-- F004: content -->
+  </footer>
+
+  <!-- F005: sticky bar -->
 </body>
 </html>

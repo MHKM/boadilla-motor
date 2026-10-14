@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" role="img" aria-label="Boadilla Motor Sport">
+  <title>Boadilla Motor Sport</title>
+  <g transform="skewX(-12)">
+    <rect x="30" y="8" width="8" height="48" fill="#f2615f"/>
+    <text x="46" y="38" font-family="League Spartan, Avenir Next, Century Gothic, Segoe UI, Roboto, Arial, sans-serif" font-size="34" font-weight="800" letter-spacing="1" fill="#09237a">BOADILLA MOTOR</text>
+    <text x="47" y="57" font-family="League Spartan, Avenir Next, Century Gothic, Segoe UI, Roboto, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="8" fill="#4b4f58">SPORT</text>
+  </g>
+</svg>
