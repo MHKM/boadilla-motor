@@ -271,6 +271,49 @@ a {
   color: inherit;
 }
 
+/* ---- Hero (F001) ---- */
+
+.hero {
+  padding: var(--space-12) 0;
+  background: var(--color-surface-dark);
+  color: var(--color-on-surface-dark);
+}
+
+.hero :focus-visible {
+  outline-color: var(--color-accent);
+}
+
+.hero__title {
+  max-width: 18ch;
+}
+
+.hero__subtitle {
+  max-width: 46ch;
+  margin: var(--space-4) 0 var(--space-6);
+  font-size: var(--font-size-lg);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hero__call {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.hero__call:hover {
+  filter: brightness(0.92);
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding: var(--space-16) 0;
+  }
+}
+
 /* ---- Accessibility helpers ---- */
 
 .skip-link {
