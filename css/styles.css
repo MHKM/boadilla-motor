@@ -361,3 +361,18 @@ a {
   min-height: var(--touch-target);
   font-weight: var(--font-weight-semibold);
 }
+
+.contact__address {
+  margin-bottom: var(--space-4);
+  font-style: normal;
+}
+
+.contact__hours {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__zbe {
+  margin-top: var(--space-6);
+}
