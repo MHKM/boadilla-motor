@@ -338,3 +338,26 @@ a {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* ---- Contact and footer (F004) ---- */
+
+.contact__list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__label {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.contact__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  font-weight: var(--font-weight-semibold);
+}

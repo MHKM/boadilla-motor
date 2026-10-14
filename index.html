@@ -35,8 +35,33 @@
       <!-- F003: content -->
     </section>
 
-    <section id="contacto" data-testid="contact">
+    <section id="contacto" class="section" data-testid="contact">
       <!-- F004: content -->
+      <div class="container">
+        <h2 class="section__title" data-testid="contact-title">Contacto</h2>
+        <div class="grid grid--2">
+          <div class="card">
+            <h3 class="card__title">Llámanos o escríbenos</h3>
+            <ul class="contact__list">
+              <li class="contact__item">
+                <span class="contact__label">Teléfono</span>
+                <a class="contact__link" data-testid="contact-phone-main" href="tel:+34915048056">915 04 80 56</a>
+              </li>
+              <li class="contact__item">
+                <span class="contact__label">Móvil</span>
+                <a class="contact__link" data-testid="contact-phone-mobile" href="tel:+34619768932">619 76 89 32</a>
+              </li>
+              <li class="contact__item">
+                <a class="btn btn--whatsapp" data-testid="contact-whatsapp" href="https://wa.me/34619768932?text=Hola%2C%20quer%C3%ADa%20pedir%20cita%20para%20mi%20coche." target="_blank" rel="noopener">Escribir por WhatsApp</a>
+              </li>
+              <li class="contact__item">
+                <span class="contact__label">Correo electrónico</span>
+                <a class="contact__link" data-testid="contact-email" href="mailto:info@boadillamotor.es">info@boadillamotor.es</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
