@@ -225,4 +225,80 @@
       el.blur();
     }
   });
+
+  // ---- T014: previous / next arrows (progressive enhancement) ----
+
+  function firstFullyVisible(p) {
+    var el = track(p);
+    var list = items(p);
+    for (var i = 0; i < list.length; i++) {
+      if (fullyInTrack(el, list[i])) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  test("AC-F002-11 at 1280px the arrows are visible buttons with labels and a 44px target", function (page) {
+    var p = page.desktop;
+    [
+      { id: "services-prev", label: "Servicio anterior" },
+      { id: "services-next", label: "Servicio siguiente" }
+    ].forEach(function (spec) {
+      var btn = byTestId(p.doc, spec.id);
+      assert(btn, spec.id + " missing");
+      assertEqual(btn.tagName, "BUTTON", spec.id + " tag");
+      assert(isVisible(btn), spec.id + " is not visible");
+      assertEqual(btn.closest('[data-testid="services-item"]'), null, spec.id + " is inside a services-item");
+      assertEqual(btn.getAttribute("aria-label"), spec.label, spec.id + " aria-label");
+      var rect = btn.getBoundingClientRect();
+      assert(rect.width >= 44 && rect.height >= 44, spec.id + " is " + rect.width + "x" + rect.height + ", below 44x44");
+    });
+  });
+
+  test("AC-F002-12 at 375px the arrows exist but are not visible", function (page) {
+    var p = page.mobile;
+    ["services-prev", "services-next"].forEach(function (id) {
+      var btn = byTestId(p.doc, id);
+      assert(btn, id + " missing");
+      assert(!isVisible(btn), id + " is visible at 375px");
+    });
+  });
+
+  test("AC-F002-13 next moves the track to the second card and enables previous", function (page) {
+    var p = page.desktop;
+    var el = track(p);
+    var prev = byTestId(p.doc, "services-prev");
+    var next = byTestId(p.doc, "services-next");
+    assert(el && prev && next, "carousel or arrows missing");
+    try {
+      setScroll(p.win, el, 0);
+      assert(prev.disabled, "services-prev is enabled at the start");
+      var x0 = el.scrollLeft;
+      next.click();
+      assert(el.scrollLeft > x0, "scrollLeft did not increase: " + x0 + " -> " + el.scrollLeft);
+      assertEqual(firstFullyVisible(p), 1, "first fully visible item after next");
+      assert(!prev.disabled, "services-prev is still disabled after next");
+    } finally {
+      reset(p.win, el);
+    }
+  });
+
+  test("AC-F002-14 previous moves the track back from the end and enables next", function (page) {
+    var p = page.desktop;
+    var el = track(p);
+    var prev = byTestId(p.doc, "services-prev");
+    var next = byTestId(p.doc, "services-next");
+    assert(el && prev && next, "carousel or arrows missing");
+    try {
+      setScroll(p.win, el, el.scrollWidth);
+      assert(next.disabled, "services-next is enabled at the end");
+      var x0 = el.scrollLeft;
+      prev.click();
+      assert(el.scrollLeft < x0, "scrollLeft did not decrease: " + x0 + " -> " + el.scrollLeft);
+      assert(!next.disabled, "services-next is still disabled after previous");
+    } finally {
+      reset(p.win, el);
+    }
+  });
 })();
