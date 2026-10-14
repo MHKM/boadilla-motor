@@ -314,6 +314,30 @@ a {
   }
 }
 
+/* Navigation (F001) */
+
+:root {
+  --header-height: calc(var(--touch-target) + 2 * var(--space-3));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: var(--header-height);
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+}
+
 /* ---- Accessibility helpers ---- */
 
 .skip-link {
