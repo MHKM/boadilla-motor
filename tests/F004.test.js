@@ -129,4 +129,89 @@
     assert(insideWidth(doc, el), "contact-map outside the screen width");
     assert(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth, "horizontal scroll at 375px");
   });
+
+  // ---- T011: footer and page-wide guarantees ----
+
+  var SECTION_TESTIDS = [
+    "contact-title", "contact-phone-main", "contact-phone-mobile", "contact-whatsapp",
+    "contact-email", "contact-address", "contact-map", "contact-hours", "contact-zbe"
+  ];
+
+  function rectsOverlap(a, b) {
+    return a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1;
+  }
+
+  function assertNoOverlap(p, label) {
+    var doc = p.doc;
+    var items = [];
+    SECTION_TESTIDS.forEach(function (id) {
+      var el = byTestId(doc, id);
+      assert(el, label + ": " + id + " missing");
+      assert(isVisible(el), label + ": " + id + " not visible");
+      items.push({ id: id, rect: el.getBoundingClientRect() });
+    });
+    allByTestId(doc, "contact-hours-line").forEach(function (el, i) {
+      assert(isVisible(el), label + ": hours line " + i + " not visible");
+      items.push({ id: "contact-hours-line-" + i, rect: el.getBoundingClientRect() });
+    });
+    for (var i = 0; i < items.length; i++) {
+      for (var j = i + 1; j < items.length; j++) {
+        var a = items[i];
+        var b = items[j];
+        if (a.id === "contact-hours" && b.id.indexOf("contact-hours-line") === 0) {
+          continue; // the container holds its lines
+        }
+        assert(!rectsOverlap(a.rect, b.rect), label + ": " + a.id + " overlaps " + b.id);
+      }
+    }
+  }
+
+  test("AC-F004-09 footer shows the static copyright with a plausible year", function (page) {
+    var el = byTestId(page.mobile.doc, "footer-copyright");
+    assert(el, "footer-copyright missing");
+    assert(el.closest("footer"), "footer-copyright is not inside the footer");
+    var m = /^© (\d{4}) Boadilla Motor Sport$/.exec(text(el));
+    assert(m, "copyright text does not match: " + JSON.stringify(text(el)));
+    var year = Number(m[1]);
+    assert(year >= 2026 && year <= new Date().getFullYear(), "year out of range: " + year);
+  });
+
+  test("AC-F004-10 every contact occurrence agrees with the expected data, with and without JS", function (page) {
+    assertEqual(JSON.stringify(window.checkContact(page.mobile.doc, C)), "[]", "errors with JS");
+    assertEqual(JSON.stringify(window.checkContact(page.nojs.doc, C)), "[]", "errors without JS");
+  });
+
+  test("AC-F004-11 contact content is complete and identical without JavaScript", function (page) {
+    SECTION_TESTIDS.concat(["footer-copyright"]).forEach(function (id) {
+      var withJs = byTestId(page.mobile.doc, id);
+      var noJs = byTestId(page.nojs.doc, id);
+      assert(noJs, id + " missing without JS");
+      assert(text(noJs).length > 0, id + " is empty without JS");
+      assertEqual(text(noJs), text(withJs), id + " text");
+      assertEqual(noJs.getAttribute("href"), withJs.getAttribute("href"), id + " href");
+    });
+  });
+
+  test("AC-F004-12 no forms, no cookie banner and only relative scripts", function (page) {
+    var doc = page.mobile.doc;
+    assertEqual(doc.querySelectorAll("form, input, textarea, select").length, 0, "form controls");
+    var banners = Array.prototype.filter.call(doc.querySelectorAll("[id], [class], [data-testid]"), function (el) {
+      return /cookie|consent/i.test(el.id + " " + el.getAttribute("class") + " " + (el.getAttribute("data-testid") || ""));
+    });
+    assertEqual(banners.length, 0, "cookie/consent elements");
+    assert(!/cookies/i.test(doc.body.textContent), "body text mentions cookies");
+    Array.prototype.forEach.call(doc.querySelectorAll("script"), function (s) {
+      var src = s.getAttribute("src");
+      assert(src, "inline script found");
+      assert(!/^[a-z][a-z0-9+.-]*:/i.test(src) && src.indexOf("//") !== 0 && src.charAt(0) !== "/", "non-relative script: " + src);
+    });
+  });
+
+  test("AC-F004-14 contact elements are visible and do not overlap at 375px", function (page) {
+    assertNoOverlap(page.mobile, "375px");
+  });
+
+  test("AC-F004-14 contact elements are visible and do not overlap at 1280px", function (page) {
+    assertNoOverlap(page.desktop, "1280px");
+  });
 })();
