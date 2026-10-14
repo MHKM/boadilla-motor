@@ -73,4 +73,60 @@
     });
     assert(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth, "horizontal scroll at 375px");
   });
+
+  // ---- T010: address, map link, hours and ZBE notice ----
+
+  test("AC-F004-04 address is inside an address element with the exact text", function (page) {
+    var el = byTestId(page.mobile.doc, "contact-address");
+    assert(el, "contact-address missing");
+    assert(el.closest("address"), "contact-address is not inside <address>");
+    assertEqual(text(el), C.address, "address text");
+  });
+
+  test("AC-F004-05 map link opens Google Maps in a new tab and there is no iframe", function (page) {
+    var doc = page.mobile.doc;
+    var el = byTestId(doc, "contact-map");
+    assert(el, "contact-map missing");
+    assertEqual(el.tagName, "A", "tag");
+    assertEqual(text(el), "Cómo llegar", "text");
+    assertEqual(el.getAttribute("href"), C.mapUrl, "href");
+    assertEqual(el.getAttribute("target"), "_blank", "target");
+    assert(rel(el).indexOf("noopener") !== -1, "rel must contain noopener");
+    assertEqual(doc.querySelectorAll("iframe").length, 0, "number of iframes");
+  });
+
+  test("AC-F004-06 hours are two lines, in order, each on its own row", function (page) {
+    var doc = page.mobile.doc;
+    var box = byTestId(doc, "contact-hours");
+    assert(box, "contact-hours missing");
+    var lines = allByTestId(doc, "contact-hours-line");
+    assertEqual(lines.length, 2, "number of hour lines");
+    lines.forEach(function (li, i) {
+      assert(box.contains(li), "line " + i + " is outside contact-hours");
+      assertEqual(text(li), C.hours[i], "text of line " + i);
+    });
+    var first = lines[0].getBoundingClientRect();
+    var second = lines[1].getBoundingClientRect();
+    assert(second.top >= first.bottom - 1, "second line is not below the first");
+  });
+
+  test("AC-F004-08 ZBE notice is visible and mentions the sticker and calling first", function (page) {
+    var el = byTestId(page.mobile.doc, "contact-zbe");
+    assert(el, "contact-zbe missing");
+    assert(isVisible(el), "contact-zbe not visible");
+    var t = text(el).toLowerCase();
+    assert(t.indexOf("zona de bajas emisiones") !== -1, "missing 'Zona de Bajas Emisiones'");
+    assert(t.indexOf("etiqueta ambiental") !== -1, "missing 'etiqueta ambiental'");
+    assert(t.indexOf("llámanos") !== -1, "missing 'llámanos'");
+  });
+
+  test("AC-F004-13 map link is tappable at 375px", function (page) {
+    var doc = page.mobile.doc;
+    var el = byTestId(doc, "contact-map");
+    assert(el, "contact-map missing");
+    var r = el.getBoundingClientRect();
+    assert(r.height >= 44 - 1, "contact-map height " + r.height + " < 44");
+    assert(insideWidth(doc, el), "contact-map outside the screen width");
+    assert(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth, "horizontal scroll at 375px");
+  });
 })();
