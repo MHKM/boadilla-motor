@@ -124,4 +124,177 @@
     var bg = page.mobile.win.getComputedStyle(hero).backgroundImage;
     assertEqual(bg, "none", "hero background-image");
   });
+
+  // ---- T006: header and navigation ----
+
+  var NAV = [
+    { text: "Servicios", href: "#servicios" },
+    { text: "Por qué nosotros", href: "#por-que-nosotros" },
+    { text: "Contacto", href: "#contacto" }
+  ];
+
+  // Own frame (never the shared page.*) with a tall spacer so the page can scroll
+  // even while the other sections are short. Call p.cleanup() in a finally.
+  function scrollableFrame(w, h) {
+    return loadFrame("../index.html", w, h).then(function (p) {
+      var spacer = p.doc.createElement("div");
+      spacer.setAttribute("data-testid", "test-spacer");
+      spacer.style.height = "3000px";
+      p.doc.querySelector("main").appendChild(spacer);
+      p.cleanup = function () {
+        if (spacer.parentNode) {
+          spacer.parentNode.removeChild(spacer);
+        }
+        p.win.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      };
+      return p;
+    });
+  }
+
+  function scrollTop(p, y) {
+    p.win.scrollTo({ top: y, left: 0, behavior: "instant" });
+  }
+
+  function headerLinks(doc) {
+    return allByTestId(doc, "header-nav-link");
+  }
+
+  function headerSnapshot(p) {
+    var doc = p.doc;
+    var logo = byTestId(doc, "header-logo");
+    return [logo ? logo.getAttribute("href") : "", logo ? (logo.querySelector("img") || {}).alt : ""]
+      .concat(headerLinks(doc).map(function (a) { return text(a) + "|" + a.getAttribute("href"); }));
+  }
+
+  test("AC-F001-07 header logo links to #inicio and has the brand alt text", function (page) {
+    var logo = byTestId(page.mobile.doc, "header-logo");
+    assert(logo, "header-logo missing");
+    assertEqual(logo.tagName, "A", "header-logo tag");
+    assertEqual(logo.getAttribute("href"), "#inicio", "header-logo href");
+    var img = logo.querySelector("img");
+    assert(img, "header-logo has no img");
+    assertEqual(img.getAttribute("alt"), "Boadilla Motor Sport", "logo alt");
+  });
+
+  test("AC-F001-08 three navigation links in order, pointing to existing sections", function (page) {
+    var doc = page.mobile.doc;
+    var links = headerLinks(doc);
+    assertEqual(links.length, 3, "number of header-nav-link");
+    links.forEach(function (a, i) {
+      assertEqual(text(a), NAV[i].text, "text of link " + (i + 1));
+      assertEqual(a.getAttribute("href"), NAV[i].href, "href of link " + (i + 1));
+      assert(doc.getElementById(NAV[i].href.slice(1)), "target " + NAV[i].href + " does not exist");
+    });
+  });
+
+  test("AC-F001-09 logo and links are visible, tall enough and inside the width at 375px and 1280px", function (page) {
+    [page.mobile, page.desktop].forEach(function (p) {
+      var width = p.doc.documentElement.clientWidth;
+      var logo = byTestId(p.doc, "header-logo");
+      assert(isVisible(logo), "logo is not visible at " + width + "px");
+      assert(insideWidth(p, logo), "logo is cut off at " + width + "px");
+      var links = headerLinks(p.doc);
+      assertEqual(links.length, 3, "visible links at " + width + "px");
+      links.forEach(function (a) {
+        assert(isVisible(a), text(a) + " is not visible at " + width + "px");
+        assert(a.getBoundingClientRect().height >= 44, text(a) + " is shorter than 44px at " + width + "px");
+        assert(insideWidth(p, a), text(a) + " is cut off at " + width + "px");
+      });
+      assertEqual(byTestId(p.doc, "header").querySelectorAll("button").length, 0, "buttons (hidden menu) in the header");
+    });
+  });
+
+  test("AC-F001-10 header is present and identical without JavaScript", function (page) {
+    var header = byTestId(page.nojs.doc, "header");
+    assert(isVisible(header), "header is not visible without JavaScript");
+    assert(isVisible(byTestId(page.nojs.doc, "header-logo")), "logo is not visible without JavaScript");
+    headerLinks(page.nojs.doc).forEach(function (a) {
+      assert(isVisible(a), text(a) + " is not visible without JavaScript");
+    });
+    assertEqual(headerSnapshot(page.nojs).join("\n"), headerSnapshot(page.mobile).join("\n"), "header without JavaScript");
+  });
+
+  test("T006 header is not sticky below 768px", function () {
+    function check(w, h) {
+      return scrollableFrame(w, h).then(function (p) {
+        try {
+          scrollTop(p, 600);
+          var header = byTestId(p.doc, "header");
+          var position = p.win.getComputedStyle(header).position;
+          assert(position !== "sticky" && position !== "fixed", "header position is " + position + " at " + w + "px");
+          var bottom = header.getBoundingClientRect().bottom;
+          assert(bottom <= 1, "header is still on screen at " + w + "px: bottom " + bottom);
+        } finally {
+          p.cleanup();
+        }
+      });
+    }
+    return check(375, 812).then(function () { return check(767, 900); });
+  });
+
+  test("T006 header is sticky from 768px", function () {
+    function check(w, h) {
+      return scrollableFrame(w, h).then(function (p) {
+        try {
+          scrollTop(p, 600);
+          var header = byTestId(p.doc, "header");
+          assertEqual(p.win.getComputedStyle(header).position, "sticky", "header position at " + w + "px");
+          var rect = header.getBoundingClientRect();
+          assert(Math.abs(rect.top) <= 1, "header top is " + rect.top + " at " + w + "px");
+          assert(isVisible(byTestId(p.doc, "header-logo")), "logo is not visible at " + w + "px");
+          var links = headerLinks(p.doc);
+          assertEqual(links.length, 3, "links at " + w + "px");
+          links.forEach(function (a) {
+            assert(isVisible(a), text(a) + " is not visible at " + w + "px");
+            var r = a.getBoundingClientRect();
+            var hit = p.doc.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            assert(hit === a || a.contains(hit), text(a) + " is covered by another element at " + w + "px");
+          });
+        } finally {
+          p.cleanup();
+        }
+      });
+    }
+    return check(768, 900).then(function () { return check(1280, 900); });
+  });
+
+  test("T006 nav anchors are not hidden under the sticky header", function () {
+    return scrollableFrame(1280, 900).then(function (p) {
+      try {
+        var header = byTestId(p.doc, "header");
+        var root = p.doc.documentElement;
+        var targets = NAV.map(function (n) { return n.href.slice(1); }).concat(["contenido"]);
+        targets.forEach(function (id) {
+          var target = p.doc.getElementById(id);
+          assert(target, "target #" + id + " missing");
+          target.scrollIntoView({ block: "start", behavior: "instant" });
+          var top = target.getBoundingClientRect().top;
+          var bottom = header.getBoundingClientRect().bottom;
+          assert(top >= bottom - 1, "#" + id + " is under the header: top " + top + " < header bottom " + bottom);
+          var maxScroll = root.scrollHeight - root.clientHeight;
+          if (p.win.scrollY < maxScroll - 1) {
+            assert(top <= bottom + 17, "#" + id + " lands too low: top " + top + " > header bottom " + bottom + " + 16");
+          }
+        });
+      } finally {
+        p.cleanup();
+      }
+    });
+  });
+
+  test("T006 nav anchors land at the top below 768px", function () {
+    return scrollableFrame(375, 812).then(function (p) {
+      try {
+        NAV.map(function (n) { return n.href.slice(1); }).concat(["contenido"]).forEach(function (id) {
+          var target = p.doc.getElementById(id);
+          assert(target, "target #" + id + " missing");
+          target.scrollIntoView({ block: "start", behavior: "instant" });
+          var top = target.getBoundingClientRect().top;
+          assert(Math.abs(top) <= 1, "#" + id + " top is " + top + " instead of 0");
+        });
+      } finally {
+        p.cleanup();
+      }
+    });
+  });
 })();
