@@ -515,3 +515,96 @@ a {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* ---- Contact and footer (F004) ---- */
+
+.contact__list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__label {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.contact__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  font-weight: var(--font-weight-semibold);
+}
+
+.contact__address {
+  margin-bottom: var(--space-4);
+  font-style: normal;
+}
+
+.contact__hours {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact__zbe {
+  margin-top: var(--space-6);
+}
+
+.site-footer__copy {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+/* ---- Sticky mobile bar (F005) ---- */
+
+:root {
+  --sticky-bar-height: 64px;
+}
+
+body {
+  padding-bottom: var(--sticky-bar-height);
+}
+
+.sticky-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  gap: var(--space-2);
+  height: var(--sticky-bar-height);
+  padding: var(--space-2);
+  background: var(--color-surface-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.sticky-bar__btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 var(--space-2);
+}
+
+.sticky-bar__call {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.sticky-bar :focus-visible {
+  outline-color: var(--color-accent);
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+
+  .sticky-bar {
+    display: none;
+  }
+}
