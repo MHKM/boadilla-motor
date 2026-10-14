@@ -25,7 +25,7 @@ Tests run in the browser and are driven headless by Google Chrome. `scripts/test
 
 ### Lint
 
-`scripts/lint.sh` checks the rules of the project with grep: no external resources, no inline styles, `rel="noopener"` on `target="_blank"` links, no `data-config` and no `js/config.js`, no contact data in `js/*.js`, URL-encoded `text=` on `wa.me` links, relative paths only, no colour literals in CSS outside the generated tokens and test names starting with an AC or task ID. It prints `LINT <rule> <file>:<line> <message>` per violation and exits 1, or prints `LINT OK`.
+`scripts/lint.sh` checks the rules of the project with grep: no external resources, no inline styles, `rel="noopener"` on `target="_blank"` links, no `data-config` and no `js/config.js`, no contact data in `js/*.js`, URL-encoded `text=` on `wa.me` links, relative paths only, no colour literals in CSS outside the generated tokens, every `var(--x)` in `css/styles.css` defined in `css/tokens.css` or `css/styles.css` (`css-var-defined`), `font-size` values using `var(...)` (`font-size-token`), no `px`/`rem`/`em` literals in `margin`, `padding` or `gap` (`no-spacing-literal`), `@media` widths only 640px, 768px, 1024px or 1280px (`media-width`) and test names starting with an AC or task ID. It prints `LINT <rule> <file>:<line> <message>` per violation and exits 1, or prints `LINT OK`.
 
 ## Changing a contact value
 
