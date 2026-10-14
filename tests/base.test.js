@@ -312,3 +312,57 @@ test("T001 frames have the documented viewport sizes", function (page) {
     });
   });
 })();
+
+// ---- T002: CI workflow ----
+
+(function () {
+  function readWorkflow() {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "../.github/workflows/ci.yml");
+      xhr.onload = function () { resolve(xhr.responseText); };
+      xhr.onerror = function () { reject(new Error("cannot read .github/workflows/ci.yml")); };
+      xhr.send();
+    });
+  }
+
+  test("T002 workflow is named CI with a single job check on ubuntu-latest", function () {
+    return readWorkflow().then(function (yml) {
+      assertMatch(yml, /^name: CI\s*$/m, "workflow name");
+      assertMatch(yml, /^jobs:\s*\n  check:\s*$/m, "job check");
+      assertMatch(yml, /^    runs-on: ubuntu-latest\s*$/m, "runs-on");
+      assertEqual((yml.match(/^  [a-z][a-z0-9_-]*:\s*$/gm) || []).filter(function (l) { return l.trim() !== "check:" && l.trim() !== "push:" && l.trim() !== "pull_request:"; }).length, 0, "no other job");
+    });
+  });
+
+  test("T002 workflow runs on every pull request and on pushes to master and release branches", function () {
+    return readWorkflow().then(function (yml) {
+      assertMatch(yml, /^on:\s*$/m, "on block");
+      assertMatch(yml, /^  pull_request:/m, "pull_request trigger");
+      assertMatch(yml, /^  push:\s*$/m, "push trigger");
+      assertMatch(yml, /^    branches:\s*\[\s*master\s*,\s*"?release\/\*\*"?\s*\]/m, "push branches");
+      assert(!/pull_request:\s*\n\s+branches/.test(yml), "pull_request must not be limited to some branches");
+    });
+  });
+
+  test("T002 workflow checks out, lints and tests with the project commands only", function () {
+    return readWorkflow().then(function (yml) {
+      var checkout = yml.indexOf("uses: actions/checkout@v4");
+      var lint = yml.indexOf("run: bash scripts/lint.sh");
+      var tests = yml.indexOf("run: bash scripts/test.sh");
+      assert(checkout !== -1, "actions/checkout@v4 step missing");
+      assert(lint !== -1, "lint step missing");
+      assert(tests !== -1, "test step missing");
+      assert(checkout < lint && lint < tests, "order must be checkout, lint, test");
+      assert(!/setup-node|setup-python|npm |apt-get|pip /.test(yml), "no toolchain setup expected");
+    });
+  });
+
+  test("T002 workflow has no secrets and no deploy step", function () {
+    return readWorkflow().then(function (yml) {
+      assert(!/secrets\./i.test(yml), "workflow must not use secrets");
+      assert(!/deploy|upload-pages-artifact|configure-pages|gh-pages|git push/i.test(yml), "workflow must not deploy");
+      assert(!/permissions:\s*\n(\s+.*\n)*\s+(contents|pages|id-token):\s*write/.test(yml), "no write permissions");
+    });
+  });
+})();
