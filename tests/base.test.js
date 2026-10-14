@@ -213,7 +213,7 @@ test("T001 frames have the documented viewport sizes", function (page) {
     assertEqual(css(page.mobile.win, byTestId(d, "header"), "background-color"), "rgb(1, 22, 39)", "header background");
   });
 
-  test("T003 body uses the bg colour and the body font family token", function (page) {
+  test("T003 body uses the bg and text colour tokens", function (page) {
     var d = page.mobile.doc;
     assertEqual(css(page.mobile.win, d.body, "background-color"), "rgb(245, 245, 245)", "body background");
     assertEqual(css(page.mobile.win, d.body, "color"), "rgb(1, 22, 39)", "body text colour");
