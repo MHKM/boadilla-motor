@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Galería de componentes</title>
+  <link rel="stylesheet" href="../../css/tokens.css">
+  <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+  <!-- Component gallery: one of each base component, used by tests and the validator. -->
+  <a class="skip-link" href="#fx-main" data-testid="fx-skip-link">Saltar al contenido</a>
+
+  <header class="site-header" data-testid="fx-site-header">
+    <a class="site-header__logo" href="#fx-main" data-testid="fx-site-header__logo"><img src="../../assets/logo-negative.svg" alt="Boadilla Motor Sport" width="360" height="64"></a>
+    <nav class="site-nav" aria-label="Galería" data-testid="fx-site-nav">
+      <a class="site-nav__link" href="#fx-main" data-testid="fx-site-nav__link">Servicios</a>
+      <a class="site-nav__link" href="#fx-main">Contacto</a>
+    </nav>
+  </header>
+
+  <main id="fx-main">
+    <section class="section" data-testid="fx-section">
+      <div class="container" data-testid="fx-container">
+        <h2 class="section__title" data-testid="fx-section__title">Título de sección</h2>
+        <p class="section__intro" data-testid="fx-section__intro">Texto de introducción de la sección.</p>
+
+        <div class="grid grid--2" data-testid="fx-grid--2">
+          <div class="card" data-testid="fx-card">
+            <h3 class="card__title" data-testid="fx-card__title">Título de tarjeta</h3>
+            <p class="card__text" data-testid="fx-card__text">Texto de la tarjeta.</p>
+          </div>
+          <div class="card"><h3 class="card__title">Otra tarjeta</h3><p class="card__text">Texto.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" data-testid="fx-section--alt">
+      <div class="container">
+        <div class="grid grid--3" data-testid="fx-grid--3">
+          <div class="card"><h3 class="card__title">Uno</h3><p class="card__text">Texto.</p></div>
+          <div class="card"><h3 class="card__title">Dos</h3><p class="card__text">Texto.</p></div>
+          <div class="card"><h3 class="card__title">Tres</h3><p class="card__text">Texto.</p></div>
+        </div>
+        <div class="grid" data-testid="fx-grid">
+          <div class="notice" data-testid="fx-notice">Aviso informativo.</div>
+          <div class="notice notice--warning" data-testid="fx-notice--warning">Aviso importante.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <p>
+          <a class="btn" href="#fx-main" data-testid="fx-btn">Botón base</a>
+          <a class="btn btn--primary" href="#fx-main" data-testid="fx-btn--primary">Llamar ahora</a>
+          <a class="btn btn--whatsapp" href="#fx-main" data-testid="fx-btn--whatsapp">
+            <svg class="icon btn__icon" viewBox="0 0 24 24" aria-hidden="true" data-testid="fx-btn__icon"><path d="M21 12a9 9 0 1 1-4-7.5L21 3l-1.5 4A9 9 0 0 1 21 12z"/></svg>
+            Escribir por WhatsApp
+          </a>
+          <a class="btn btn--secondary" href="#fx-main" data-testid="fx-btn--secondary">Cómo llegar</a>
+        </p>
+        <p>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" data-testid="fx-icon"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+          <span class="visually-hidden" data-testid="fx-visually-hidden">Texto solo para lectores de pantalla</span>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" data-testid="fx-site-footer">
+    <p>Pie de página de ejemplo.</p>
+  </footer>
+</body>
+</html>
